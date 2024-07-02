@@ -14,31 +14,8 @@ module "security_group" {
   name            = var.name
   description     = var.description
   vpc_id          = module.vpc.vpc_id
-
-  ingress_rules = [
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-    {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-
-  egress_rules = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  ]
-
+  ingress_rules   = var.ingress_rules
+  egress_rules    = var.egress_rules
   tags = {
     Name = var.tags
   }
@@ -53,4 +30,22 @@ module "ec2_instance" {
   subnet_id              = module.vpc.public_subnet_ids[0]
   ami_id                 = var.ami_id
   security_group_ids     = [module.security_group.security_group_id]
+}
+
+#ALB 
+module "alb" {
+  source = "../../../modules/alb/"
+    
+  alb_name                       = var.alb_name
+  internal                   = var.internal
+  load_balancer_type         = var.load_balancer_type
+  security_groups            = [module.security_group.security_group_id]
+  subnets                    = module.vpc.public_subnet_ids[*]
+  enable_deletion_protection = var.enable_deletion_protection
+  idle_timeout               = var.idle_timeout
+  vpc_id                     = module.vpc.vpc_id
+  http_listener              = var.http_listener
+  https_listener             = var.https_listener
+  target_group               = var.target_group
+  health_check               = var.health_check
 }
