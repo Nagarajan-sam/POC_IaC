@@ -7,7 +7,7 @@ variable "vpc_cidr" {
 variable "vpc_name" {
   description = "The name of the VPC."
   type        = string
-  default     = "my-vpc"
+  default     = "dotnet-app-vpc"
 }
 
 variable "public_subnet_cidrs" {
@@ -214,4 +214,120 @@ variable "health_check" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
   }
+}
+
+#S3 Bucket
+variable "bucket_name" {
+  description = "Name of the S3 Bucket"
+  type        = string
+  default     = "dotnet-s3-bucket"
+}
+
+variable "acl" {
+  type = string
+  description = "Bucket ACL"
+  default = null
+}
+
+variable "grant" {
+  description = "An ACL policy grant. Conflicts with `acl`"
+  type        = any
+  default     = []
+}
+ 
+variable "create_object" {
+  type = bool
+  description = "Enable Objects in Bucket"
+  default = false
+}
+
+variable "key" {
+  type = string
+  description = "Bucket folder structure"
+  default = false
+}
+
+#RDS Instance
+variable "identifier" {
+  description = "The name of the RDS instance"
+  type        = string
+  default     = "dotnet-app"
+}
+
+variable "engine" {
+  description = "The database engine to use"
+  type        = string
+  default     = "mysql"
+}
+
+variable "engine_version" {
+  description = "The engine version to use"
+  type        = string
+  default     = "8.0.35"
+}
+
+variable "instance_class" {
+  description = "The instance type of the RDS instance"
+  type        = string
+  default     = "db.m6g.large"
+}
+
+variable "allocated_storage" {
+  description = "The allocated storage in gigabytes"
+  type        = number
+  default     = 200
+}
+
+variable "storage_type" {
+  description = "One of 'standard' (magnetic), 'gp2' (general purpose SSD), 'gp3' (new generation of general purpose SSD), or 'io1' (provisioned IOPS SSD). The default is 'io1' if iops is specified, 'gp2' if not. If you specify 'io1' or 'gp3' , you must also include a value for the 'iops' parameter"
+  type        = string
+  default     = "io2"
+}
+
+variable "iops" {
+  description = "The amount of provisioned IOPS. Setting this implies a storage_type of 'io1' or `gp3`. See `notes` for limitations regarding this variable for `gp3`"
+  type        = number
+  default     = 3000
+}
+
+variable "username" {
+  description = "Username for the master DB user"
+  type        = string
+  default     = "admin"
+}
+
+variable "password" {
+  description = "Password for the master DB user"
+  type        = string
+  default     = "Master#123"
+}
+
+variable "port" {
+  description = "The port on which the DB accepts connections"
+  type        = string
+  default     = null
+}
+
+variable "deletion_protection" {
+  description = "The database can't be deleted when this value is set to true"
+  type        = bool
+  default     = false
+}
+
+variable "db_name" {
+  description = "The DB name to create. If omitted, no database is created initially"
+  type        = string
+  default     = "dotnet"
+}
+
+variable "db_subnet_group_name" {
+  description = "List of VPC subnet ids to associate"
+  type        = string
+  default     = "dotnet-subnet"
+}
+
+variable "skip_final_snapshot" {
+  description = "The window to perform maintenance in. Syntax: 'ddd:hh24:mi-ddd:hh24:mi'. Eg: 'Mon:00:00-Mon:03:00'"
+  type        = bool
+  default     = true
 }
